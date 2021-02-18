@@ -6,3 +6,5 @@ services:
     container_name: grpc-demo
     volumes:
       - ./:/grpc
+    environment: 
+      SERVER_TYPE: rest

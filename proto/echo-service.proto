@@ -3,6 +3,7 @@ syntax = "proto3";
 package grpctest;
 option go_package="test.com/grpctest/proto";
 
+import "proto/google/api/annotations.proto";
 
 message Echo {
     string id = 1;
@@ -11,5 +12,10 @@ message Echo {
 
 
 service GrpcDemo {
-    rpc GetEcho (Echo) returns (Echo) {}
+    rpc GetEcho (Echo) returns (Echo) {
+        option (google.api.http) = {
+            post: "/api/echo/{id}"
+            body: "*"
+        };
+    }
 }

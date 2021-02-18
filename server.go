@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
+	"os"
 
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 	"test.com/proto"
 )
@@ -20,16 +23,29 @@ func (s echoService) GetEcho(ctx context.Context, message *proto.Echo) (*proto.E
 }
 
 func main() {
+	serverType := os.Getenv("SERVER_TYPE")
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
 		log.Fatal(err)
 	}
-	grpcServer := grpc.NewServer()
 	server := echoService{}
-	proto.RegisterGrpcDemoServer(grpcServer, server)
-	fmt.Println("gRPC server listening on port 50051")
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatal(err)
+	if serverType == "grpc" {
+		grpcServer := grpc.NewServer()
+		proto.RegisterGrpcDemoServer(grpcServer, server)
+		fmt.Println("gRPC server listening on port 50051")
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatal(err)
+		}
+		defer grpcServer.Stop()
+	} else if serverType == "rest" {
+		mux := runtime.NewServeMux()
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+		err := proto.RegisterGrpcDemoHandlerServer(ctx, mux, server)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("REST server listening on port 50051")
+		http.Serve(lis, mux)
 	}
-	defer grpcServer.Stop()
 }
