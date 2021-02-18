@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package grpctest;
+option go_package="test.com/grpctest/proto";
+
+
+message Echo {
+    string id = 1;
+    string message = 2;
+};
+
+
+service GrpcDemo {
+    rpc GetEcho (Echo) returns (Echo) {}
+}
