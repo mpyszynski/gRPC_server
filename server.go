@@ -14,9 +14,9 @@ type echoService struct {
 	proto.GrpcDemoServer
 }
 
-func (s echoService) GetEcho(ctx context.Context, in *proto.Echo) (*proto.Echo, error) {
-	fmt.Printf("Echo ID: %s, message: %s \n", in.Id, in.Message)
-	return in, nil
+func (s echoService) GetEcho(ctx context.Context, message *proto.Echo) (*proto.Echo, error) {
+	fmt.Printf("Echo ID: %s, message: %s \n", message.Id, message.Message)
+	return message, nil
 }
 
 func main() {
