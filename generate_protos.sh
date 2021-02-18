@@ -11,3 +11,6 @@ protoc --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/echo-service.pr
 
 # Generate REST proxy
 protoc --grpc-gateway_out=. --grpc-gateway_opt=paths=source_relative proto/echo-service.proto
+
+# Generate swagger file
+protoc --openapiv2_out=. proto/echo-service.proto
